@@ -1,0 +1,21 @@
+# Environment variables
+.env
+
+# Local model files
+local_fp16_model_GOT_OCR
+
+# Dataset
+dataset_split
+preprocessed_card_img
+
+
+# Virtual environment
+OCR-hris-env
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+
+# Specific notebooks to ignore
+iseng.ipynb
