@@ -30,7 +30,7 @@ class NPWPOCR():
         self.prompt_template = ChatPromptTemplate.from_messages(
             [
                 ("system",
-                 "you are an assistant that are very proficient at fixing typo in indonesian NPWP (Nomor Pokok Wajib Pajak) with this format structure:\nNPWP : <NOMOR NPWP>\n<NAMA>\nNIK : <NOMOK NIK>\n<ALAMAT>\nKPP <KANTOR PELAYANAN PAJAK>\nTerdaftar : <tanggal-bulan-tahun>"
+                 "you are an assistant that are very proficient at fixing typo in indonesian NPWP (Nomor Pokok Wajib Pajak) with this format structure:\nNPWP : <NOMOR NPWP>\n<NAMA>\nNIK : <NOMOK NIK>\n<ALAMAT>\nKPP <KANTOR PELAYANAN PAJAK>\nTerdaftar : <tanggal-bulan-tahun>\ndon't forget to fix the typo by considering context"
                 ),
                 ("human", "fix typo in this text so that it will match indonesian NPWP card format, without you saying any explanation nor any word:\n{input}"),
             ]
@@ -42,7 +42,7 @@ class NPWPOCR():
 
         self.result = NPWPInformation()
 
-    def ocr_image(self, uuid, image_file: str, ocr_type: str = 'ocr'):
+    def ocr_image(self, uuid, image_file: str, ocr_type: str = 'format'):
         """
         Perform OCR prediction on an input image.
 
@@ -70,7 +70,6 @@ class NPWPOCR():
         preprocessed_img_path : str
             Path to the preprocessed image file.
         """        
-        img = Image.open(img)
         img = np.array(img)
 
         # Convert RGB to BGR (since OpenCV expects BGR format)
@@ -78,8 +77,8 @@ class NPWPOCR():
 
         # Get the shape of the image and crop it
         top, right, channels = img.shape
-        right = int(right * 0.75)
-        cropped_img = img[0:top, 0:right]
+        right = int(0.15 * right)
+        cropped_img = img[right:, :]
 
         # Convert the image to grayscale
         # gray_img = cv2.cvtColor(cropped_img, cv2.COLOR_BGR2GRAY)

@@ -27,7 +27,8 @@ def classify_and_ocr():
         return jsonify({'error': 'No image provided'}), 400
 
     image_file = request.files['image']
-    image = Image.open(BytesIO(image_file.read()))
+    # image = Image.open(BytesIO(image_file.read()))
+    image = Image.open(image_file)
 
     # Retrieve the classifier model from ModelLoader
     classifier_model = ModelLoader.get_classifier_model()
@@ -36,16 +37,20 @@ def classify_and_ocr():
     label = classify_card(image, classifier_model)
     print(f"Label: {label}")
 
-    user_uuid = session.get('uuid')  # Retrieve the UUID from the session
+    user_uuid = session['uuid']  # Retrieve the UUID from the session
 
     if label == 0:  # KTP
         try:
             # Get the KTPOCR instance from ModelLoader
-            ktp_ocr = ModelLoader.get_ktp_ocr()
+            ktp_ocr = ModelLoader.get_ktp_ocr()            
+            
             # Perform OCR using the KTPOCR instance
-            ktp_ocr_result = ktp_ocr.ocr_image(user_uuid, image_file)
+            ktp_ocr_result = ktp_ocr.ocr_image(user_uuid, image)
             ktp_clean_text = ktp_ocr.clean_text(ktp_ocr_result)
             ktp_json_result = ktp_ocr.extract_information(ktp_clean_text)
+
+            print(ktp_ocr_result)
+            print(ktp_clean_text)
 
             if isinstance(ktp_json_result, str):
                 ktp_json_result = json.loads(ktp_json_result)
@@ -68,10 +73,14 @@ def classify_and_ocr():
         try:
             # Get the NPWPOCR instance from ModelLoader
             npwp_ocr = ModelLoader.get_npwp_ocr()
+
             # Perform OCR using the NPWPOCR instance
-            npwp_ocr_result = npwp_ocr.ocr_image(user_uuid, image_file)
+            npwp_ocr_result = npwp_ocr.ocr_image(user_uuid, image)
             npwp_clean_text = npwp_ocr.clean_text(npwp_ocr_result)
             npwp_json_result = npwp_ocr.extract_information(npwp_clean_text)
+
+            print(npwp_ocr_result)
+            print(npwp_clean_text)
 
             if isinstance(npwp_json_result, str):
                 npwp_json_result = json.loads(npwp_json_result)

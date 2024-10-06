@@ -51,7 +51,7 @@ class KTPOCR:
         self.prompt_template = ChatPromptTemplate.from_messages(
             [
                 ("system",
-                 "you are an assistant that are very proficient at fixing typo in indonesian ID card (KTP) with this format structure:\nPROVINSI : <PROVINCE>\nKOTA/KABUPATEN : <CITY/DISTRICT>\nNIK : <NIK_NUMBER>\nNama : <FULL_NAME>\nTempat/Tgl Lahir : <BIRTH_PLACE>, <BIRTH_DATE>\nJenis Kelamin : <GENDER>\nGol. Darah : <BLOOD_TYPE>\nAlamat : <ADDRESS>\nRT/RW : <RT>/<RW>\nKel/Desa : <SUBDISTRICT/VILLAGE>\nKecamatan : <SUB-DISTRICT>\nAgama : <RELIGION>\nStatus Perkawinan : <MARITAL_STATUS>\nPekerjaan : <OCCUPATION>\nKewarganegaraan : <NATIONALITY>\nBerlaku Hingga : <VALID_UNTIL>"
+                 "you are an assistant that are very proficient at fixing typo in indonesian ID card (KTP) with this format structure:\nPROVINSI : <PROVINCE>\nKOTA/KABUPATEN : <CITY/DISTRICT>\nNIK : <NIK_NUMBER>\nNama : <FULL_NAME>\nTempat/Tgl Lahir : <BIRTH_PLACE>, <BIRTH_DATE>\nJenis Kelamin : <GENDER>\nGol. Darah : <BLOOD_TYPE>\nAlamat : <ADDRESS>\nRT/RW : <RT>/<RW>\nKel/Desa : <SUBDISTRICT/VILLAGE>\nKecamatan : <SUB-DISTRICT>\nAgama : <RELIGION>\nStatus Perkawinan : <MARITAL_STATUS>\nPekerjaan : <OCCUPATION>\nKewarganegaraan : <NATIONALITY>\nBerlaku Hingga : <VALID_UNTIL>\n"
                 ),
                 ("human", "fix typo in this text so that it will match indonesian ID card (KTP) format, if gol. darah is not specified then make it '-', without you saying any explanation nor any word:\n{input}"),
             ]
@@ -64,7 +64,7 @@ class KTPOCR:
         self.result = KTPInformation()
 
 
-    def ocr_image(self, uuid, image_file: str, ocr_type: str = 'ocr'):
+    def ocr_image(self, uuid, image_file, ocr_type: str = 'format'):
         """
         Perform OCR prediction on an input image.
 
@@ -72,7 +72,7 @@ class KTPOCR:
         :param ocr_type: Type of OCR ('ocr', 'format', etc.).
         :return: OCR result.
         """
-        image_path = self.preprocess_img(uuid, image_file)
+        image_path = self.preprocess_img(image_file, uuid)
 
         return self.model.chat(self.tokenizer, image_path, ocr_type=ocr_type)
 
@@ -92,11 +92,11 @@ class KTPOCR:
         preprocessed_img_path : str
             Path to the preprocessed image file.
         """
-        img = Image.open(img)
         img = np.array(img)
 
         # Convert RGB to BGR (since OpenCV expects BGR format)
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+        print('img ready KG')
 
         # Get the shape of the image and crop it
         top, right, channels = img.shape
