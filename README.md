@@ -8,6 +8,7 @@ This project is an Optical Character Recognition (OCR) system for processing Ind
 - **KTP & NPWP OCR Pipelines**: Utilizes the "stepfun/GOT_OCR2" model from Hugging Face to extract relevant details from the classified cards.
 - **Efficient Model Management**: The model is loaded once and shared between the KTP and NPWP OCR pipelines.
 - **Error Handling**: Descriptive error messages are returned in case of failures during processing or classification.
+- **Text Correction**: The OCR results are passed to the LLaMA 3.1 model via the GROQ API, which corrects any typos and formats the data into the expected structure.
 
 ## Setup Instructions
 
@@ -26,7 +27,7 @@ pip install -r requirements.txt
 ### 3. Download the Hugging Face `GOT_OCR2` Model
 Before running the application, you need to download the `GOT_OCR2` model from Hugging Face. Follow these steps:
 
-1. Go to the [Hugging Face model page](https://huggingface.co/stepfun/GOT_OCR2).
+1. Go to the Hugging Face model page.
 2. Download the model files and save them to your local machine.
 3. Update the model path in your `.env` file:
    ```
@@ -54,7 +55,8 @@ python server.py
 
 1. Upload an image of a KTP or NPWP card.
 2. The system classifies the card and processes it using the appropriate OCR pipeline.
-3. Results, including extracted data, will be returned in JSON format.
+3. The OCR results are sent to the LLaMA 3.1 model via the GROQ API for text correction and formatting.
+4. Results, including extracted data, will be returned in JSON format.
 
 ## Technologies Used
 
@@ -63,6 +65,4 @@ python server.py
 - **Hugging Face**: "stepfun/GOT_OCR2" model for OCR.
 - **Python**: The core language used for the entire pipeline.
 - **OpenCV**: For preprocessing the images before OCR.
-```
-
-This version includes clear instructions for users to download the `GOT_OCR2` model and specify the model path in their environment configuration. Let me know if you need any further modifications!
+- **GROQ API**: For passing OCR results to the LLaMA 3.1 model for text correction and formatting.
