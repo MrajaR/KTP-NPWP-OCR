@@ -21,12 +21,17 @@ def create_user_session():
         session['uuid'] = str(uuid.uuid4())  # Store the generated UUID in the session
         print(f"New user session created with UUID: {session['uuid']}")
 
+
+@app.route('/')
+def index():
+    return 'Hello, World!'
+
 @app.route('/classify_and_ocr', methods=['POST'])
 def classify_and_ocr():
-    if 'image' not in request.files:
+    if 'file' not in request.files:
         return jsonify({'error': 'No image provided'}), 400
 
-    image_file = request.files['image']
+    image_file = request.files['file']
     # image = Image.open(BytesIO(image_file.read()))
     image = Image.open(image_file)
 
@@ -51,15 +56,20 @@ def classify_and_ocr():
 
             print(ktp_ocr_result)
             print(ktp_clean_text)
+            print(ktp_json_result)
 
             if isinstance(ktp_json_result, str):
                 ktp_json_result = json.loads(ktp_json_result)
+
+            ktp_json_result['label'] = 'KTP'
+            print(ktp_json_result)
 
             return jsonify({
                 'code': 200,
                 'message': 'Success to read OCR',
                 'errors': None,
-                'data': ktp_json_result
+                'data': ktp_json_result,
+                'label': 'KTP'
             })
         except Exception as e:
             return jsonify({
@@ -85,11 +95,14 @@ def classify_and_ocr():
             if isinstance(npwp_json_result, str):
                 npwp_json_result = json.loads(npwp_json_result)
 
+            npwp_json_result['label'] = 'NPWP'
+
             return jsonify({
                 'code': 200,
                 'message': 'Success to read OCR',
                 'errors': None,
-                'data': npwp_json_result
+                'data': npwp_json_result,
+                'label': 'NPWP'
             })
         except Exception as e:
             return jsonify({
@@ -100,4 +113,4 @@ def classify_and_ocr():
             })
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5000, host='0.0.0.0')
