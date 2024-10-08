@@ -1,4 +1,3 @@
-```markdown
 # KTP and NPWP OCR Application
 
 This project is an Optical Character Recognition (OCR) system for processing Indonesian KTP (National Identity Cards) and NPWP (Taxpayer Identification Cards). It leverages a custom-built card classifier and the "stepfun/GOT_OCR2" model from Hugging Face for OCR.
